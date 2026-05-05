@@ -26,7 +26,7 @@
             border-radius: 15px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.2);
             width: 100%;
-            max-width: 450px;
+            max-width: 500px;
             border-top: 5px solid #ffc107;
         }
 
@@ -194,7 +194,6 @@
             margin-top: 3px;
         }
 
-        /* Estilo para a seção de múltiplos certificados */
         .cursos-info {
             background: #e8f0fe;
             padding: 10px;
@@ -226,17 +225,23 @@
         <label>Curso:</label>
         <select id="curso">
             <option value="">-- Selecione o curso --</option>
-            <option value="AFV">AFV - Atendimento e Formação de Vigilante</option>
-            <option value="NR-10">NR-10 - Segurança em Instalações Elétricas</option>
-            <option value="Brigadista">Brigadista de Incêndio</option>
-            <option value="Porteiro">Porteiro</option>
-            <option value="Recepcionista">Recepcionista</option>
+            <option value="AFV">AFV - Atualização / Reciclagem</option>
+            <option value="FV">FV - Formação de Vigilantes</option>
+            <option value="APTV">APTV - Transporte de Valores</option>
+            <option value="APEA">APEA - Escolta Armada</option>
+            <option value="ATTV">ATTV - Atualização TV</option>
+            <option value="ATEA">ATEA - Atualização Escolta</option>
+            <option value="APSP">APSP - Segurança Pessoal</option>
+            <option value="ATSP">ATSP - Atualização SP</option>
+            <option value="APENL1">APENL1 - Não Letais 1</option>
+            <option value="APENL2">APENL2 - Não Letais 2</option>
+            <option value="ESES">ESES - Grandes Eventos</option>
             <option value="Outro">Outro curso</option>
         </select>
 
         <div id="outroCursoDiv" style="display: none; margin-top: 10px;">
-            <label>Digite o nome do curso:</label>
-            <input type="text" id="outroCurso" placeholder="Ex: Primeiros Socorros">
+            <label>Digite o nome do curso (SIGLA):</label>
+            <input type="text" id="outroCurso" placeholder="Ex: ABC" style="text-transform: uppercase;">
         </div>
 
         <button type="submit">📄 Buscar PDF</button>
@@ -271,6 +276,11 @@
 <script>
     // Força o campo NOME ficar sempre em MAIÚSCULO
     document.getElementById('nome').addEventListener('input', function(e) {
+        this.value = this.value.toUpperCase();
+    });
+
+    // Força o campo OUTRO CURSO ficar maiúsculo
+    document.getElementById('outroCurso').addEventListener('input', function(e) {
         this.value = this.value.toUpperCase();
     });
 
@@ -347,15 +357,15 @@
             return;
         }
 
-        // Pega o nome do curso
-        let nomeCurso = curso;
+        // Pega a sigla do curso
+        let siglaCurso = curso;
         if (curso === 'Outro') {
             if (!outroCurso || !outroCurso.trim()) {
-                mostrarErro('❌ Digite o nome do curso!');
+                mostrarErro('❌ Digite a sigla do curso!');
                 document.getElementById('outroCurso').focus();
                 return;
             }
-            nomeCurso = outroCurso.toUpperCase().trim();
+            siglaCurso = outroCurso.toUpperCase().trim();
         }
 
         // Remove espaços extras e mantém maiúsculo
@@ -363,15 +373,15 @@
         let cpfLimpo = cpf.replace(/[^0-9]/g, '');
         let cpfFormatado = cpfLimpo.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
         
-        // Monta o nome do arquivo com o curso
-        let nomeArquivo = `${nomeFormatado}, CPF n° ${cpfFormatado} - ${nomeCurso}.pdf`;
+        // Monta o nome do arquivo com a SIGLA do curso
+        let nomeArquivo = `${nomeFormatado}, CPF n° ${cpfFormatado} - ${siglaCurso}.pdf`;
         
         let baseUrl = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/');
         let caminhoPDF = baseUrl + `certificados/${encodeURIComponent(nomeArquivo)}`;
 
         loading.style.display = 'block';
 
-        console.log('Procurando:', nomeArquivo); // Para debug
+        console.log('Procurando:', nomeArquivo);
 
         try {
             const response = await fetch(caminhoPDF, { method: 'HEAD' });
@@ -391,7 +401,7 @@
                 }, 2000);
             } else {
                 loading.style.display = 'none';
-                mostrarErro(`❌ Certificado não encontrado!<br><small>Verifique nome, CPF e curso.<br>Cursos disponíveis: AFV, NR-10, Brigadista, Porteiro, Recepcionista</small>`);
+                mostrarErro(`❌ Certificado não encontrado!<br><small>Verifique nome, CPF e curso.<br>Cursos disponíveis: AFV, FV, APTV, APEA, ATTV, ATEA, APSP, ATSP, APENL1, APENL2, ESES</small>`);
             }
         } catch (error) {
             loading.style.display = 'none';
