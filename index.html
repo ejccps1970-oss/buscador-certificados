@@ -9,7 +9,6 @@
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
             background: linear-gradient(135deg, #1a3e6b 0%, #2b5a9b 100%);
@@ -19,7 +18,6 @@
             align-items: center;
             padding: 20px;
         }
-
         .container {
             background: white;
             padding: 35px;
@@ -29,29 +27,24 @@
             max-width: 500px;
             border-top: 5px solid #ffc107;
         }
-
         .logo {
             text-align: center;
             margin-bottom: 20px;
         }
-
         .logo img {
             max-width: 120px;
             height: auto;
             margin-bottom: 10px;
         }
-
         .logo h2 {
             color: #1a3e6b;
             font-size: 20px;
             margin-bottom: 5px;
         }
-
         .logo p {
             color: #6c757d;
             font-size: 12px;
         }
-
         h1 {
             color: #1a3e6b;
             text-align: center;
@@ -62,7 +55,6 @@
             display: inline-block;
             width: 100%;
         }
-
         label {
             font-weight: 600;
             display: block;
@@ -70,7 +62,6 @@
             margin-bottom: 5px;
             color: #1a3e6b;
         }
-
         input, select {
             width: 100%;
             padding: 12px;
@@ -80,17 +71,14 @@
             transition: all 0.3s ease;
             box-sizing: border-box;
         }
-
         #nome {
             text-transform: uppercase;
         }
-
         input:focus, select:focus {
             outline: none;
             border-color: #2b5a9b;
             box-shadow: 0 0 0 3px rgba(43,90,155,0.1);
         }
-
         button {
             width: 100%;
             padding: 12px;
@@ -104,13 +92,11 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
-
         button:hover {
             background: #2b5a9b;
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-
         .mensagem-dica {
             background: #e8f0fe;
             padding: 12px;
@@ -121,7 +107,6 @@
             text-align: center;
             border-left: 4px solid #ffc107;
         }
-
         .erro {
             color: #721c24;
             margin-top: 15px;
@@ -133,7 +118,6 @@
             border-left: 4px solid #f44336;
             display: none;
         }
-
         .sucesso {
             color: #155724;
             margin-top: 15px;
@@ -145,7 +129,6 @@
             border-left: 4px solid #28a745;
             display: none;
         }
-
         .observacao {
             background: #fff8e1;
             border: 1px solid #ffecb3;
@@ -156,11 +139,9 @@
             color: #856404;
             text-align: center;
         }
-
         .observacao strong {
             color: #d32f2f;
         }
-
         .whatsapp-link {
             display: inline-block;
             background: #25D366;
@@ -173,12 +154,10 @@
             font-size: 12px;
             transition: all 0.3s ease;
         }
-
         .whatsapp-link:hover {
             background: #128C7E;
             transform: scale(1.02);
         }
-
         .loading {
             color: #1a3e6b;
             margin-top: 15px;
@@ -186,14 +165,12 @@
             font-size: 14px;
             display: none;
         }
-
         footer {
             text-align: center;
             margin-top: 20px;
             font-size: 10px;
             color: #999;
         }
-
         .caps-aviso {
             font-size: 10px;
             color: #999;
@@ -204,7 +181,8 @@
 <body>
 <div class="container">
     <div class="logo">
-        <img src="logo novo.png" alt="Logo Escola Paulista">
+        <!-- CORRIGIDO: caminho para o logo -->
+        <img src="logo novo.png" alt="Logo Escola Paulista" onerror="this.style.display='none'">
         <h2>ESCOLA PAULISTA</h2>
         <p>de Vigilantes - EPFEV</p>
     </div>
@@ -233,7 +211,6 @@
             <option value="APENL1">APENL1 - Não Letais 1</option>
             <option value="APENL2">APENL2 - Não Letais 2</option>
             <option value="ESES">ESES - Grandes Eventos</option>
-            <option value="Outro">Outro curso</option>
         </select>
 
         <div id="outroCursoDiv" style="display: none; margin-top: 10px;">
@@ -271,17 +248,14 @@
 </div>
 
 <script>
-    // Força o campo NOME ficar sempre em MAIÚSCULO
     document.getElementById('nome').addEventListener('input', function(e) {
         this.value = this.value.toUpperCase();
     });
 
-    // Força o campo OUTRO CURSO ficar maiúsculo
     document.getElementById('outroCurso').addEventListener('input', function(e) {
         this.value = this.value.toUpperCase();
     });
 
-    // Mostrar campo "Outro curso" quando selecionado
     document.getElementById('curso').addEventListener('change', function(e) {
         let outroDiv = document.getElementById('outroCursoDiv');
         if (e.target.value === 'Outro') {
@@ -291,7 +265,6 @@
         }
     });
 
-    // Máscara para o CPF
     document.getElementById('cpf').addEventListener('input', function(e) {
         let valor = e.target.value.replace(/\D/g, '');
         if (valor.length <= 11) {
@@ -354,7 +327,6 @@
             return;
         }
 
-        // Pega a sigla do curso
         let siglaCurso = curso;
         if (curso === 'Outro') {
             if (!outroCurso || !outroCurso.trim()) {
@@ -365,20 +337,15 @@
             siglaCurso = outroCurso.toUpperCase().trim();
         }
 
-        // Remove espaços extras e mantém maiúsculo
         let nomeFormatado = nome.toUpperCase().trim().replace(/\s+/g, ' ');
         let cpfLimpo = cpf.replace(/[^0-9]/g, '');
         let cpfFormatado = cpfLimpo.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-        
-        // Monta o nome do arquivo com a SIGLA do curso
         let nomeArquivo = `${nomeFormatado}, CPF n° ${cpfFormatado} - ${siglaCurso}.pdf`;
         
         let baseUrl = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/');
         let caminhoPDF = baseUrl + `certificados/${encodeURIComponent(nomeArquivo)}`;
 
         loading.style.display = 'block';
-
-        console.log('Procurando:', nomeArquivo);
 
         try {
             const response = await fetch(caminhoPDF, { method: 'HEAD' });
@@ -403,20 +370,6 @@
         } catch (error) {
             loading.style.display = 'none';
             mostrarErro(`❌ Erro ao buscar certificado.<br><small>Tente novamente.</small>`);
-        }
-    });
-
-    document.getElementById('nome').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            document.querySelector('button').click();
-        }
-    });
-    
-    document.getElementById('cpf').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            document.querySelector('button').click();
         }
     });
 </script>
