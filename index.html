@@ -52,7 +52,6 @@
             margin-bottom: 25px;
             padding-bottom: 10px;
             border-bottom: 2px solid #ffc107;
-            display: inline-block;
             width: 100%;
         }
         label {
@@ -68,7 +67,6 @@
             border: 1px solid #ddd;
             border-radius: 8px;
             font-size: 14px;
-            transition: all 0.3s ease;
             box-sizing: border-box;
         }
         #nome {
@@ -90,12 +88,10 @@
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s ease;
         }
         button:hover {
             background: #2b5a9b;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
         .mensagem-dica {
             background: #e8f0fe;
@@ -115,7 +111,6 @@
             background: #f8d7da;
             padding: 10px;
             border-radius: 8px;
-            border-left: 4px solid #f44336;
             display: none;
         }
         .sucesso {
@@ -126,7 +121,6 @@
             background: #d4edda;
             padding: 10px;
             border-radius: 8px;
-            border-left: 4px solid #28a745;
             display: none;
         }
         .observacao {
@@ -152,11 +146,9 @@
             font-weight: bold;
             margin-top: 8px;
             font-size: 12px;
-            transition: all 0.3s ease;
         }
         .whatsapp-link:hover {
             background: #128C7E;
-            transform: scale(1.02);
         }
         .loading {
             color: #1a3e6b;
@@ -181,7 +173,7 @@
 <body>
 <div class="container">
     <div class="logo">
-        <!-- LOGO usando logo.png -->
+        <!-- LOGO CORRIGIDO - caminho direto -->
         <img src="logo.png" alt="Logo Escola Paulista">
         <h2>ESCOLA PAULISTA</h2>
         <p>de Vigilantes - EPFEV</p>
@@ -259,11 +251,7 @@
 
     document.getElementById('curso').addEventListener('change', function(e) {
         let outroDiv = document.getElementById('outroCursoDiv');
-        if (e.target.value === 'Outro') {
-            outroDiv.style.display = 'block';
-        } else {
-            outroDiv.style.display = 'none';
-        }
+        outroDiv.style.display = e.target.value === 'Outro' ? 'block' : 'none';
     });
 
     document.getElementById('cpf').addEventListener('input', function(e) {
@@ -285,18 +273,14 @@
         let msgDiv = document.getElementById('mensagem');
         msgDiv.innerHTML = texto;
         msgDiv.style.display = 'block';
-        setTimeout(() => {
-            msgDiv.style.display = 'none';
-        }, 6000);
+        setTimeout(() => msgDiv.style.display = 'none', 6000);
     }
 
     function mostrarSucesso(texto) {
         let msgDiv = document.getElementById('sucesso');
         msgDiv.innerHTML = texto;
         msgDiv.style.display = 'block';
-        setTimeout(() => {
-            msgDiv.style.display = 'none';
-        }, 3000);
+        setTimeout(() => msgDiv.style.display = 'none', 3000);
     }
 
     document.getElementById('buscaForm').addEventListener('submit', async function(e) {
@@ -366,7 +350,7 @@
                 }, 2000);
             } else {
                 loading.style.display = 'none';
-                mostrarErro(`❌ Certificado não encontrado!<br><small>Verifique nome, CPF e curso.<br>Cursos disponíveis: AFV, FV, APTV, APEA, ATTV, ATEA, APSP, ATSP, APENL1, APENL2, ESES</small>`);
+                mostrarErro(`❌ Certificado não encontrado!<br><small>Verifique nome, CPF e curso.</small>`);
             }
         } catch (error) {
             loading.style.display = 'none';
