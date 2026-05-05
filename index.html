@@ -64,12 +64,18 @@
             margin-top: 15px;
             text-align: center;
             font-size: 14px;
+            background: #ffe8e8;
+            padding: 10px;
+            border-radius: 5px;
         }
         .sucesso {
             color: green;
             margin-top: 15px;
             text-align: center;
             font-size: 14px;
+            background: #e8fce8;
+            padding: 10px;
+            border-radius: 5px;
         }
         .info {
             background: #e8f0fe;
@@ -79,6 +85,33 @@
             font-size: 12px;
             color: #555;
             text-align: center;
+        }
+        .observacao {
+            background: #fff3cd;
+            border: 1px solid #ffecb3;
+            padding: 12px;
+            margin-top: 15px;
+            border-radius: 5px;
+            font-size: 12px;
+            color: #856404;
+            text-align: center;
+        }
+        .observacao strong {
+            color: #d32f2f;
+        }
+        .whatsapp-link {
+            display: inline-block;
+            background: #25D366;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 8px;
+            font-size: 12px;
+        }
+        .whatsapp-link:hover {
+            background: #128C7E;
         }
         .loading {
             color: #1a73e8;
@@ -101,21 +134,31 @@
 
         <button type="submit">📄 Buscar PDF</button>
     </form>
-    <div id="mensagem" class="erro"></div>
-    <div id="loading" class="loading">⏳ Buscando certificado...</div>
+    <div id="mensagem" class="erro" style="display: none;"></div>
+    <div id="loading" class="loading">⏳ Verificando certificado...</div>
+    
+    <div class="observacao">
+        ⚠️ <strong>ATENÇÃO:</strong><br>
+        Estão disponíveis para download os certificados emitidos nos <strong>últimos 6 meses</strong>.<br>
+        Para certificados com data de emissão superior a 6 meses, solicitar diretamente à<br>
+        <strong>ESCOLA PAULISTA</strong> pelo WhatsApp:
+        <br>
+        <a href="https://wa.me/5511999999999?text=Olá%2C%20gostaria%20de%20solicitar%20meu%20certificado%20antigo." 
+           class="whatsapp-link" 
+           target="_blank">
+           📱 Clique aqui para falar no WhatsApp
+        </a>
+    </div>
+    
     <div class="info">
-        ⚠️ Digite o nome e CPF exatamente como consta no certificado.
+        💡 Digite o nome e CPF exatamente como consta no certificado.
     </div>
 </div>
 
 <script>
-    let voltandoParaTela = false;
-
-    // Máscara para o CPF (formata automaticamente enquanto digita)
     document.getElementById('cpf').addEventListener('input', function(e) {
-        let valor = e.target.value.replace(/\D/g, ''); // remove tudo que não é número
+        let valor = e.target.value.replace(/\D/g, '');
         if (valor.length <= 11) {
-            // Aplica a máscara: 000.000.000-00
             valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
             valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
             valor = valor.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
@@ -123,104 +166,76 @@
         }
     });
 
-    document.getElementById('buscaForm').addEventListener('submit', function(e) {
+    document.getElementById('buscaForm').addEventListener('submit', async function(e) {
         e.preventDefault();
 
         let nome = document.getElementById('nome').value;
         let cpf = document.getElementById('cpf').value;
-        let mensagem = document.getElementById('mensagem');
+        let mensagemDiv = document.getElementById('mensagem');
         let loading = document.getElementById('loading');
 
-        mensagem.innerHTML = '';
-        mensagem.className = 'erro';
+        mensagemDiv.style.display = 'none';
+        mensagemDiv.innerHTML = '';
         
         if (!nome || !nome.trim()) {
-            mensagem.innerHTML = '❌ Digite o nome completo!';
+            mostrarMensagem('❌ Digite o nome completo!', 'erro');
             document.getElementById('nome').focus();
             return;
         }
 
         if (!cpf || cpf.replace(/\D/g, '').length !== 11) {
-            mensagem.innerHTML = '❌ Digite um CPF válido com 11 números!';
+            mostrarMensagem('❌ Digite um CPF válido com 11 números!', 'erro');
             document.getElementById('cpf').focus();
             return;
         }
 
-        // Formata o nome: maiúsculo e remove espaços extras
         let nomeFormatado = nome.toUpperCase().trim().replace(/\s+/g, ' ');
-
-        // Limpa o CPF (remove pontos, traço, espaços)
         let cpfLimpo = cpf.replace(/[^0-9]/g, '');
-
-        // Formata CPF com pontos e traço (padrão do arquivo)
         let cpfFormatado = cpfLimpo.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-
-        // Monta o nome do arquivo
         let nomeArquivo = `${nomeFormatado}, CPF n° ${cpfFormatado}.pdf`;
         
-        // Pega a URL base do site
         let baseUrl = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/');
         let caminhoPDF = baseUrl + `certificados/${encodeURIComponent(nomeArquivo)}`;
 
         loading.style.display = 'block';
 
-        let iframe = document.createElement('iframe');
-        iframe.style.display = 'none';
-        
-        let timeoutId = null;
-        let sucesso = false;
-
-        iframe.onload = function() {
-            if (!sucesso && !voltandoParaTela) {
-                sucesso = true;
+        try {
+            const response = await fetch(caminhoPDF, { method: 'HEAD' });
+            
+            if (response.ok) {
                 loading.style.display = 'none';
-                mensagem.className = 'sucesso';
-                mensagem.innerHTML = '✅ Certificado encontrado! Abrindo...';
-                
+                mostrarMensagem('✅ Certificado encontrado! Abrindo...', 'sucesso');
                 window.open(caminhoPDF, '_blank');
                 
-                if (timeoutId) clearTimeout(timeoutId);
-                
-                voltandoParaTela = true;
-                setTimeout(function() {
+                setTimeout(() => {
                     document.getElementById('nome').value = '';
                     document.getElementById('cpf').value = '';
-                    mensagem.innerHTML = '';
-                    voltandoParaTela = false;
+                    mensagemDiv.style.display = 'none';
                     document.getElementById('nome').focus();
                 }, 2000);
-            }
-            if (document.body.contains(iframe)) {
-                document.body.removeChild(iframe);
-            }
-        };
-        
-        iframe.onerror = function() {
-            if (!sucesso) {
+            } else {
                 loading.style.display = 'none';
-                mensagem.className = 'erro';
-                mensagem.innerHTML = `❌ Certificado não encontrado!<br><small>Verifique nome e CPF</small>`;
-                if (timeoutId) clearTimeout(timeoutId);
+                mostrarMensagem(`❌ Certificado não encontrado!<br><small>Verifique se o nome e CPF estão corretos.<br>Lembre-se: apenas certificados dos últimos 6 meses estão disponíveis online.</small>`, 'erro');
             }
-            if (document.body.contains(iframe)) {
-                document.body.removeChild(iframe);
-            }
-        };
-        
-        iframe.src = caminhoPDF;
-        document.body.appendChild(iframe);
-
-        timeoutId = setTimeout(function() {
-            if (!sucesso && document.body.contains(iframe)) {
-                loading.style.display = 'none';
-                mensagem.className = 'erro';
-                mensagem.innerHTML = `❌ Certificado não encontrado!<br><small>Verifique se o nome e CPF estão corretos</small>`;
-                document.body.removeChild(iframe);
-            }
-        }, 5000);
+        } catch (error) {
+            loading.style.display = 'none';
+            mostrarMensagem(`❌ Erro ao buscar certificado.<br><small>Tente novamente.</small>`, 'erro');
+        }
     });
 
-    // Permite pressionar Enter para buscar
+    function mostrarMensagem(texto, tipo) {
+        let mensagemDiv = document.getElementById('mensagem');
+        mensagemDiv.innerHTML = texto;
+        mensagemDiv.className = tipo;
+        mensagemDiv.style.display = 'block';
+        
+        if (tipo === 'erro') {
+            setTimeout(() => {
+                mensagemDiv.style.display = 'none';
+            }, 6000);
+        }
+    }
+
     document.getElementById('nome').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             e.preventDefault();
